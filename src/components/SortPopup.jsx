@@ -1,17 +1,56 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+
+import classNames from 'classnames';
+
+const sortItems = [
+    {
+        name: 'популярности',
+        type: 'popular'
+    },
+    {
+        name: 'цене',
+        type: 'price'
+    },
+    {
+        name: 'алфавиту',
+        type: 'aphabet'
+    }
+];
 
 const SortPopup = () => {
 
     const [visablePopup, setVisablePopup] = useState(false);
+    const [activeItemIndex, setActiveItemIndex] = useState(0);
+    const sortRef = useRef();
+    const activeItem = sortItems[activeItemIndex].name;
 
     const togglePopupHandler = () => {
         setVisablePopup(!visablePopup);
+    };
+
+    const onActiveSelected = (index) => {
+        setActiveItemIndex(index);
+        setVisablePopup(false);
     }
 
+    const sortOutsideClickListener = useCallback((e) => {
+        if (!e.path.includes(sortRef.current)) {
+            setVisablePopup(false);
+        }
+    }, []);
+
+    useEffect(() => {
+        document.body.addEventListener('click', sortOutsideClickListener);
+        return () => document.body.removeEventListener('click', sortOutsideClickListener);;
+    }, [sortOutsideClickListener]);
+
+
+
     return (
-        <div className="sort">
+        <div className="sort" ref={sortRef}>
             <div className="sort__label">
                 <svg
+                    className={classNames({ 'rotated': visablePopup })}
                     width="10"
                     height="6"
                     viewBox="0 0 10 6"
@@ -24,14 +63,18 @@ const SortPopup = () => {
                     />
                 </svg>
                 <b>Сортировка по:</b>
-                <span onClick={togglePopupHandler}>популярности</span>
+                <span onClick={togglePopupHandler}>{activeItem}</span>
             </div>
             {
                 visablePopup && <div className="sort__popup">
                     <ul>
-                        <li className="active">популярности</li>
-                        <li>цене</li>
-                        <li>алфавиту</li>
+                        {
+                            sortItems.map((sortItem, index) => <li
+                                key={index}
+                                className={classNames({ 'active': activeItemIndex === index })}
+                                onClick={() => onActiveSelected(index)}
+                            >{sortItem.name}</li>)
+                        }
                     </ul>
                 </div>
             }
