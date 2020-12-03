@@ -1,13 +1,32 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { useDispatch } from 'react-redux';
 
-const PizzaBlock = ({ name, imageUrl, types, sizes, price }) => {
+import { Button } from "./index";
+import { addPizzaToCart } from '../redux/actions/cart';
+
+const PizzaBlock = ({ id, name, imageUrl, types, sizes, price, cartItems }) => {
+    const productCount = cartItems[id] ? cartItems[id].items.length : null;
     const availableTypes = ['тонкое', 'традиционное'];
     const availableSizes = [26, 30, 40];
 
     const [activeType, setActiveType] = useState(types[0]);
     const [activeSize, setActiveSize] = useState(sizes[0]);
+
+    const dispatch = useDispatch();
+
+    const onAddPizza = () => {
+        const pizza = {
+            id,
+            name,
+            imageUrl,
+            type: availableTypes[activeType],
+            size: activeSize,
+            price
+        };
+        dispatch(addPizzaToCart(pizza));
+    };
 
     return (
         <div className="pizza-block">
@@ -43,9 +62,9 @@ const PizzaBlock = ({ name, imageUrl, types, sizes, price }) => {
                     }
                 </ul>
             </div>
-            <div className="pizza-block__bottom">
+            <div className="pizza-block__bottom" >
                 <div className="pizza-block__price">от {price} ₽</div>
-                <div className="button button--outline button--add">
+                <Button className="button button--outline button--add" onClick={onAddPizza}>
                     <svg
                         width="12"
                         height="12"
@@ -59,10 +78,12 @@ const PizzaBlock = ({ name, imageUrl, types, sizes, price }) => {
                         />
                     </svg>
                     <span>Добавить</span>
-                    <i>2</i>
-                </div>
+                    {
+                        productCount && <i>{productCount}</i>
+                    }
+                </Button>
             </div>
-        </div>
+        </div >
 
     )
 }

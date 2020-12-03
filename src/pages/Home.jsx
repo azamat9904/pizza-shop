@@ -21,14 +21,14 @@ const categoryItems = [
 
 const Home = () => {
 
-    const { pizzas, isLoading, category, sortBy } = useSelector((state) => {
-        return {
-            pizzas: state.pizzasState.pizzas,
-            isLoading: state.pizzasState.isLoading,
-            category: state.filterState.category,
-            sortBy: state.filterState.sortBy
-        }
-    });
+    const { pizzas, isLoading, category, sortBy, cartItems } = useSelector((state) => ({
+        pizzas: state.pizzasState.pizzas,
+        isLoading: state.pizzasState.isLoading,
+        category: state.filterState.category,
+        sortBy: state.filterState.sortBy,
+        cartItems: state.cartState.items
+    }));
+
     const dispatch = useDispatch();
 
 
@@ -55,8 +55,12 @@ const Home = () => {
             <h2 className="content__title">Все пиццы</h2>
             <div className="content__items">
                 {
-                    isLoading ? Array(10).fill(0).map((_, index) => <PizzaBlockLoading key={index} />) :
-                        pizzas && pizzas.map((item) => <PizzaBlock  {...item} key={item.id} />)
+                    isLoading ? Array(5).fill(0).map((_, index) => <PizzaBlockLoading key={index} />) :
+                        pizzas && pizzas.map((item) => <PizzaBlock
+                            {...item}
+                            key={item.id}
+                            cartItems={cartItems}
+                        />)
                 }
             </div>
         </div>
