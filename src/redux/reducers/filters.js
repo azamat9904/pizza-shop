@@ -1,8 +1,11 @@
 import { actionTypes } from '../actions/filters';
 
 const initialState = {
-    sortBy: 'popular',
-    category: 0
+    sortBy: {
+        type: 'popular',
+        name: 'популярности'
+    },
+    category: null
 }
 
 const filters = (state = initialState, action) => {

@@ -26,9 +26,9 @@ const fetchPizzasFailed = (error) => ({
     payload: error
 });
 
-export const fetchPizzas = () => (dispatch) => {
+export const fetchPizzas = (sortBy, category) => (dispatch) => {
     dispatch(fetchPizzasStart());
-    appApi.getPizzas().then(pizzas => {
+    appApi.getPizzas(sortBy, category).then(pizzas => {
         dispatch(fetchPizzasSuccess(pizzas));
     }).catch((e) => {
         dispatch(fetchPizzasFailed(e.response));

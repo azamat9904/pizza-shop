@@ -1,4 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { useDispatch } from 'react-redux';
+import { setOrderBy } from '../redux/actions/filters';
 
 import classNames from 'classnames';
 
@@ -13,23 +15,22 @@ const sortItems = [
     },
     {
         name: 'алфавиту',
-        type: 'aphabet'
+        type: 'name'
     }
 ];
 
-const SortPopup = () => {
+const SortPopup = ({ sortBy }) => {
 
     const [visablePopup, setVisablePopup] = useState(false);
-    const [activeItemIndex, setActiveItemIndex] = useState(0);
+    const dispatch = useDispatch();
     const sortRef = useRef();
-    const activeItem = sortItems[activeItemIndex].name;
 
     const togglePopupHandler = () => {
         setVisablePopup(!visablePopup);
     };
 
-    const onActiveSelected = (index) => {
-        setActiveItemIndex(index);
+    const onActiveSelected = (sortItem) => {
+        dispatch(setOrderBy(sortItem));
         setVisablePopup(false);
     }
 
@@ -43,8 +44,6 @@ const SortPopup = () => {
         document.body.addEventListener('click', sortOutsideClickListener);
         return () => document.body.removeEventListener('click', sortOutsideClickListener);;
     }, [sortOutsideClickListener]);
-
-
 
     return (
         <div className="sort" ref={sortRef}>
@@ -63,7 +62,7 @@ const SortPopup = () => {
                     />
                 </svg>
                 <b>Сортировка по:</b>
-                <span onClick={togglePopupHandler}>{activeItem}</span>
+                <span onClick={togglePopupHandler}>{sortBy.name}</span>
             </div>
             {
                 visablePopup && <div className="sort__popup">
@@ -71,8 +70,8 @@ const SortPopup = () => {
                         {
                             sortItems.map((sortItem, index) => <li
                                 key={index}
-                                className={classNames({ 'active': activeItemIndex === index })}
-                                onClick={() => onActiveSelected(index)}
+                                className={classNames({ 'active': sortBy.type === sortItem.type })}
+                                onClick={() => onActiveSelected(sortItem)}
                             >{sortItem.name}</li>)
                         }
                     </ul>

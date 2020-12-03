@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-
+import { fetchPizzas } from '../redux/actions/pizzas';
 import { setCategory } from '../redux/actions/filters';
 
 import {
     SortPopup,
     Categories,
-    PizzaBlock
+    PizzaBlock,
+    PizzaBlockLoading
 } from '../components';
 
 
@@ -20,8 +21,20 @@ const categoryItems = [
 
 const Home = () => {
 
+    const { pizzas, isLoading, category, sortBy } = useSelector((state) => {
+        return {
+            pizzas: state.pizzasState.pizzas,
+            isLoading: state.pizzasState.isLoading,
+            category: state.filterState.category,
+            sortBy: state.filterState.sortBy
+        }
+    });
     const dispatch = useDispatch();
-    const { pizzas } = useSelector((state) => state.pizzasState);
+
+
+    useEffect(() => {
+        dispatch(fetchPizzas(sortBy, category));
+    }, [dispatch, sortBy, category]);
 
     const onItemClick = (index) => {
         dispatch(setCategory(index));
@@ -31,14 +44,19 @@ const Home = () => {
         <div className="container">
             <div className="content__top">
                 <div className="categories">
-                    <Categories items={categoryItems} onItemClick={onItemClick} />
+                    <Categories
+                        items={categoryItems}
+                        onItemClick={onItemClick}
+                        active={category}
+                    />
                 </div>
-                <SortPopup />
+                <SortPopup sortBy={sortBy} />
             </div>
             <h2 className="content__title">Все пиццы</h2>
             <div className="content__items">
                 {
-                    pizzas && pizzas.map((item) => <PizzaBlock  {...item} key={item.id} />)
+                    isLoading ? Array(10).fill(0).map((_, index) => <PizzaBlockLoading key={index} />) :
+                        pizzas && pizzas.map((item) => <PizzaBlock  {...item} key={item.id} />)
                 }
             </div>
         </div>

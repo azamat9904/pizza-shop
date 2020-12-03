@@ -1,17 +1,17 @@
 import React, { useEffect } from 'react';
 import { Route } from 'react-router';
 import { useDispatch } from 'react-redux';
+import { initFilters } from './redux/actions/filters';
+
 import { Header } from './components';
 import { Home, Cart } from './pages';
-import { fetchPizzas } from './redux/actions/pizzas';
 
 
 function App() {
-
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(fetchPizzas());
+    dispatch(initFilters());
   }, [dispatch]);
 
   return (

@@ -1,11 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import classNames from 'classnames';
 
-const Categories = ({ items, onItemClick }) => {
-    const [active, setActive] = useState(null);
+const Categories = ({ items, onItemClick, active }) => {
 
     const activeItemHandler = (index) => {
-        setActive(index);
         onItemClick(index);
     };
 
