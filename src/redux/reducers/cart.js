@@ -46,6 +46,72 @@ const cart = (state = initialState, action) => {
                 totalCount,
                 totalPrice,
             };
+        case actionTypes.REMOVE_CART_ITEM:
+            const newCartItems = {
+                ...state.items,
+            };
+            const currentTotalPrice = newCartItems[action.payload].totalPrice;
+            const currentTotalCount = newCartItems[action.payload].items.length;
+            delete newCartItems[action.payload];
+            return {
+                ...state,
+                items: newCartItems,
+                totalPrice: state.totalPrice - currentTotalPrice,
+                totalCount: state.totalCount - currentTotalCount,
+            };
+        case actionTypes.PLUS_CART_ITEM: {
+            const newObjItems = [
+                ...state.items[action.payload].items,
+                state.items[action.payload].items[0],
+            ];
+            const newItems = {
+                ...state.items,
+                [action.payload]: {
+                    items: newObjItems,
+                    totalPrice: getTotalPrice(newObjItems),
+                },
+            };
+
+            const totalCount = getTotalSum(newItems, 'items.length');
+            const totalPrice = getTotalSum(newItems, 'totalPrice');
+
+            return {
+                ...state,
+                items: newItems,
+                totalCount,
+                totalPrice,
+            };
+        }
+
+        case actionTypes.MINUS_CART_ITEM: {
+            const oldItems = state.items[action.payload].items;
+            const newObjItems =
+                oldItems.length > 1 ? state.items[action.payload].items.slice(1) : oldItems;
+            const newItems = {
+                ...state.items,
+                [action.payload]: {
+                    items: newObjItems,
+                    totalPrice: getTotalPrice(newObjItems),
+                },
+            };
+
+            const totalCount = getTotalSum(newItems, 'items.length');
+            const totalPrice = getTotalSum(newItems, 'totalPrice');
+
+            return {
+                ...state,
+                items: newItems,
+                totalCount,
+                totalPrice,
+            };
+        }
+        case actionTypes.CLEAR_CART:
+            return {
+                ...state,
+                items: {},
+                totalPrice: 0,
+                totalCount: 0
+            };
         default:
             return state;
     }
