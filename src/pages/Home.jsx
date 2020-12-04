@@ -1,14 +1,12 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+
 import { fetchPizzas } from '../redux/actions/pizzas';
 import { setCategory } from '../redux/actions/filters';
-
-import {
-    SortPopup,
-    Categories,
-    PizzaBlock,
-    PizzaBlockLoading
-} from '../components';
+import { getPizzas, getPizzasLoading } from '../redux/selectors/pizzas';
+import { getCategory, getSortBy } from '../redux/selectors/filters';
+import { getCartItems } from '../redux/selectors/cart';
+import { SortPopup, Categories, PizzaBlock, PizzaBlockLoading } from '../components';
 
 
 const categoryItems = [
@@ -22,11 +20,11 @@ const categoryItems = [
 const Home = () => {
 
     const { pizzas, isLoading, category, sortBy, cartItems } = useSelector((state) => ({
-        pizzas: state.pizzasState.pizzas,
-        isLoading: state.pizzasState.isLoading,
-        category: state.filterState.category,
-        sortBy: state.filterState.sortBy,
-        cartItems: state.cartState.items
+        pizzas: getPizzas(state),
+        isLoading: getPizzasLoading(state),
+        category: getCategory(state),
+        sortBy: getSortBy(state),
+        cartItems: getCartItems(state)
     }));
 
     const dispatch = useDispatch();

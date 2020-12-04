@@ -1,8 +1,13 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, {
+    useState,
+    useRef,
+    useEffect,
+    useCallback
+} from 'react';
 import { useDispatch } from 'react-redux';
-import { setOrderBy } from '../redux/actions/filters';
-
 import classNames from 'classnames';
+
+import { setOrderBy } from '../redux/actions/filters';
 
 const sortItems = [
     {

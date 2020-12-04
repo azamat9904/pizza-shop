@@ -1,18 +1,20 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { CartItem } from '../components';
-import {
-    clearCart,
-    removeCartItem as removeItem,
-    plusCartItem as plusItem,
-    minusCartItem as minusItem
-} from '../redux/actions/cart';
 
+import { CartItem } from '../components';
+import { getTotalCount, getTotalPrice, getCartItems } from '../redux/selectors/cart';
+import { clearCart, removeCartItem as removeItem, plusCartItem as plusItem, minusCartItem as minusItem } from '../redux/actions/cart';
 import cartEmptyImage from "../assets/img/empty-cart.png";
 
 const Cart = () => {
-    const { totalPrice, totalCount, items } = useSelector((state) => state.cartState);
+
+    const { totalPrice, totalCount, items } = useSelector((state) => ({
+        items: getCartItems(state),
+        totalPrice: getTotalPrice(state),
+        totalCount: getTotalCount(state)
+    }));
+
     const addedPizzas = Object.keys(items).map((key) => (
         {
             item: items[key].items[0],

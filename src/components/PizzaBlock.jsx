@@ -6,7 +6,15 @@ import { useDispatch } from 'react-redux';
 import { Button } from "./index";
 import { addPizzaToCart } from '../redux/actions/cart';
 
-const PizzaBlock = ({ id, name, imageUrl, types, sizes, price, cartItems }) => {
+const PizzaBlock = ({
+    id,
+    name,
+    imageUrl,
+    types,
+    sizes,
+    price,
+    cartItems
+}) => {
     const productCount = cartItems[id] ? cartItems[id].items.length : null;
     const availableTypes = ['тонкое', 'традиционное'];
     const availableSizes = [26, 30, 40];
