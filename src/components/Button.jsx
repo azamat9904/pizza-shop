@@ -19,6 +19,19 @@ const Button = ({
 
 Button.propTypes = {
     onClick: PropTypes.func,
+    className: PropTypes.string,
+    children: PropTypes.oneOfType([
+        PropTypes.arrayOf(PropTypes.node),
+        PropTypes.node
+    ]),
+    outline: PropTypes.bool
+};
+
+Button.defaultProps = {
+    onClick: null,
+    className: '',
+    children: null,
+    outline: false
 }
 
 export default Button;

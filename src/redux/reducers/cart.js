@@ -26,18 +26,20 @@ const getTotalSum = (obj, path) => {
 const cart = produce((draft, action) => {
     switch (action.type) {
         case actionTypes.ADD_PIZZA_TO_CART:
-
-            if (!draft.items[action.payload.id])
-                draft.items[action.payload.id] = { items: [action.payload] }
-            else draft.items[action.payload.id].items.push(action.payload);
-
-            draft.items[action.payload.id].totalPrice = getTotalPrice(draft.items[action.payload.id].items);
+            const currentPizza = draft.items[action.payload.id];
+            const newItems = !currentPizza ?
+                [action.payload] : [...currentPizza.items, action.payload];
+            draft.items[action.payload.id] = {
+                items: newItems,
+                totalPrice: getTotalPrice(newItems)
+            }
             draft.totalCount = getTotalSum(draft.items, 'items.length');
             draft.totalPrice = getTotalSum(draft.items, 'totalPrice');
             break;
         case actionTypes.REMOVE_CART_ITEM:
-            const currentTotalPrice = draft.items[action.payload].totalPrice;
-            const currentTotalCount = draft.items[action.payload].items.length;
+            let chosenPizza = draft.items[action.payload];
+            const currentTotalPrice = chosenPizza.totalPrice;
+            const currentTotalCount = chosenPizza.items.length;
             draft.totalPrice = draft.totalPrice - currentTotalPrice;
             draft.totalCount = draft.totalCount - currentTotalCount;
             delete draft.items[action.payload];

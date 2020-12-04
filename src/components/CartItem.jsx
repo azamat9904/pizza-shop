@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import { Button } from '../components'
 const CartItem = ({
     id,
@@ -70,5 +72,31 @@ const CartItem = ({
         </div>
     )
 }
+
+CartItem.propTypes = {
+    id: PropTypes.number,
+    name: PropTypes.string,
+    type: PropTypes.number,
+    size: PropTypes.number,
+    totalPrice: PropTypes.number,
+    count: PropTypes.number,
+    imageUrl: PropTypes.string,
+    removeCartItem: PropTypes.func,
+    plusCartItem: PropTypes.func,
+    minusCartItem: PropTypes.func,
+};
+
+CartItem.defaultProps = {
+    id: null,
+    name: "",
+    type: null,
+    size: null,
+    totalPrice: 0,
+    count: 0,
+    imageUrl: null,
+    removeCartItem: null,
+    plusCartItem: null,
+    minusCartItem: null
+};
 
 export default CartItem;

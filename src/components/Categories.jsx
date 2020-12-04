@@ -1,7 +1,12 @@
 import React from 'react';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 
-const Categories = ({ items, onItemClick, active }) => {
+const Categories = ({
+    items,
+    onItemClick,
+    active
+}) => {
 
     const activeItemHandler = (index) => {
         onItemClick(index);
@@ -22,6 +27,15 @@ const Categories = ({ items, onItemClick, active }) => {
             }
         </ul >
     )
+}
+
+Categories.propTypes = {
+    items: PropTypes.array,
+    onItemClick: PropTypes.func,
+};
+
+Categories.defaultProps = {
+    items: []
 }
 
 export default Categories;
