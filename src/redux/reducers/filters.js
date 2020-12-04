@@ -1,4 +1,5 @@
 import { actionTypes } from '../actions/filters';
+import produce from 'immer';
 
 const initialState = {
     sortBy: {
@@ -8,21 +9,17 @@ const initialState = {
     category: null
 }
 
-const filters = (state = initialState, action) => {
+const filters = produce((draft, action) => {
     switch (action.type) {
         case actionTypes.SET_SORT_BY:
-            return {
-                ...state,
-                sortBy: action.payload
-            };
+            draft.sortBy = action.payload;
+            break;
         case actionTypes.SET_CATEGORY:
-            return {
-                ...state,
-                category: action.payload
-            }
+            draft.category = action.payload;
+            break;
         default:
-            return state;
+            break;
     }
-}
+}, initialState);
 
 export default filters;

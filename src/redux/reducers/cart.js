@@ -1,4 +1,5 @@
 import { actionTypes } from '../actions/cart';
+import produce from 'immer';
 
 const initialState = {
     items: {},
@@ -22,99 +23,51 @@ const getTotalSum = (obj, path) => {
     }, 0);
 };
 
-const cart = (state = initialState, action) => {
+const cart = produce((draft, action) => {
     switch (action.type) {
         case actionTypes.ADD_PIZZA_TO_CART:
-            const currentPizzaItems = !state.items[action.payload.id]
-                ? [action.payload]
-                : [...state.items[action.payload.id].items, action.payload];
 
-            const newItems = {
-                ...state.items,
-                [action.payload.id]: {
-                    items: currentPizzaItems,
-                    totalPrice: getTotalPrice(currentPizzaItems),
-                },
-            };
+            if (!draft.items[action.payload.id])
+                draft.items[action.payload.id] = { items: [action.payload] }
+            else draft.items[action.payload.id].items.push(action.payload);
 
-            const totalCount = getTotalSum(newItems, 'items.length');
-            const totalPrice = getTotalSum(newItems, 'totalPrice');
-
-            return {
-                ...state,
-                items: newItems,
-                totalCount,
-                totalPrice,
-            };
+            draft.items[action.payload.id].totalPrice = getTotalPrice(draft.items[action.payload.id].items);
+            draft.totalCount = getTotalSum(draft.items, 'items.length');
+            draft.totalPrice = getTotalSum(draft.items, 'totalPrice');
+            break;
         case actionTypes.REMOVE_CART_ITEM:
-            const newCartItems = {
-                ...state.items,
-            };
-            const currentTotalPrice = newCartItems[action.payload].totalPrice;
-            const currentTotalCount = newCartItems[action.payload].items.length;
-            delete newCartItems[action.payload];
-            return {
-                ...state,
-                items: newCartItems,
-                totalPrice: state.totalPrice - currentTotalPrice,
-                totalCount: state.totalCount - currentTotalCount,
-            };
+            const currentTotalPrice = draft.items[action.payload].totalPrice;
+            const currentTotalCount = draft.items[action.payload].items.length;
+            draft.totalPrice = draft.totalPrice - currentTotalPrice;
+            draft.totalCount = draft.totalCount - currentTotalCount;
+            delete draft.items[action.payload];
+            break;
         case actionTypes.PLUS_CART_ITEM: {
-            const newObjItems = [
-                ...state.items[action.payload].items,
-                state.items[action.payload].items[0],
-            ];
-            const newItems = {
-                ...state.items,
-                [action.payload]: {
-                    items: newObjItems,
-                    totalPrice: getTotalPrice(newObjItems),
-                },
-            };
-
-            const totalCount = getTotalSum(newItems, 'items.length');
-            const totalPrice = getTotalSum(newItems, 'totalPrice');
-
-            return {
-                ...state,
-                items: newItems,
-                totalCount,
-                totalPrice,
-            };
+            const newPizza = draft.items[action.payload].items[0];
+            const chosenPizza = draft.items[action.payload];
+            chosenPizza.items.push(newPizza);
+            chosenPizza.totalPrice = getTotalPrice(chosenPizza.items);
+            draft.totalPrice = getTotalSum(draft.items, 'totalPrice');
+            draft.totalCount = getTotalSum(draft.items, 'items.length');
+            break;
         }
 
         case actionTypes.MINUS_CART_ITEM: {
-            const oldItems = state.items[action.payload].items;
-            const newObjItems =
-                oldItems.length > 1 ? state.items[action.payload].items.slice(1) : oldItems;
-            const newItems = {
-                ...state.items,
-                [action.payload]: {
-                    items: newObjItems,
-                    totalPrice: getTotalPrice(newObjItems),
-                },
-            };
-
-            const totalCount = getTotalSum(newItems, 'items.length');
-            const totalPrice = getTotalSum(newItems, 'totalPrice');
-
-            return {
-                ...state,
-                items: newItems,
-                totalCount,
-                totalPrice,
-            };
+            const chosenPizza = draft.items[action.payload];
+            chosenPizza.items = chosenPizza.items.length > 1 ? chosenPizza.items.slice(1) : chosenPizza.items;
+            chosenPizza.totalPrice = getTotalPrice(chosenPizza.items);
+            draft.totalCount = getTotalSum(draft.items, 'items.length');
+            draft.totalPrice = getTotalSum(draft.items, 'totalPrice');
+            break;
         }
         case actionTypes.CLEAR_CART:
-            return {
-                ...state,
-                items: {},
-                totalPrice: 0,
-                totalCount: 0
-            };
+            draft.items = {};
+            draft.totalPrice = 0;
+            draft.totalCount = 0;
+            break;
         default:
-            return state;
+            break;
     }
-}
+}, initialState);
 
 export default cart;

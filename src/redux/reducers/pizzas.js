@@ -1,4 +1,5 @@
 import { actionTypes } from '../actions/pizzas';
+import produce from 'immer';
 
 const initialState = {
     pizzas: [],
@@ -6,35 +7,27 @@ const initialState = {
     error: null
 }
 
-const pizzas = (state = initialState, action) => {
+const pizzas = produce((draft, action) => {
     switch (action.type) {
         case actionTypes.SET_PIZZAS:
-            return {
-                ...state,
-                pizzas: action.payload
-            };
+            draft.pizzas.push(action.payload);
+            break;
         case actionTypes.FETCH_PIZZAS_START:
-            return {
-                ...state,
-                isLoading: true,
-                error: null
-            };
+            draft.isLoading = true;
+            draft.error = null;
+            break;
         case actionTypes.FETCH_PIZZAS_SUCCESS:
-            return {
-                ...state,
-                isLoading: false,
-                error: null,
-                pizzas: action.payload
-            };
+            draft.isLoading = false;
+            draft.error = null;
+            draft.pizzas = action.payload;
+            break;
         case actionTypes.FETCH_PIZZAS_FAILED:
-            return {
-                ...state,
-                isLoading: false,
-                error: action.payload
-            }
+            draft.isLoading = false;
+            draft.error = action.payload;
+            break;
         default:
-            return state;
+            break;
     }
-}
+}, initialState);
 
 export default pizzas;
